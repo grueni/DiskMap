@@ -985,7 +985,7 @@ class SesManager(cmd.Cmd):
         for disk in disks:
             for key in self._enclosures.keys():
                if "/dev/" in key and self._enclosures[key]["logicalid"] == disk["enclosure"]:
-                  run(sg_ses, ["-I","0,"+str(disk["slot"]-1),setorclear,"ident",key] )
+                  run(sg_ses, ["-I","0,"+str(disk["slot"]),setorclear,"ident",key] )
 
     def do_test(self,line):
         result = {}
