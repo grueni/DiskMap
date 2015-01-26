@@ -1,18 +1,19 @@
-This document is actually heavily updated.
-Please read the original document in original.README.md
+This document is a heavily updating version of the orginal README.md.
+Please read the original document in original.README.md to honor the efforts of the original author.
 
 # DiskMap (diskmap.ses.py)
 
 Solaris/Illumos utility to manage drive and map wmn device name (c1txxx) to real drive
 
-This script will hopefully make your life easier if you use ZFS on Solaris/Illumos with a SAS environment supportimg SES3.
+This script will hopefully make your life easier if you use ZFS on Solaris/Illumos with a SAS environment supporting SES-3.
 
 It can:
 
 * list connected drives, and see the mapping between wmn device name (c1txxx) and their physical location (controller, enclosure, slot);
 * turn the error led of a drive on and off (for easy identification of the drive in large enclosures with many disks);
-* be used as a pipe to enhance the output of programs like `iostat` to annotate disk information with the location of each disk.
-* create proposals for zpool layouts 
+* be used as a pipe to enhance the output of programs like `iostat` to annotate disk information with the location of each disk;
+* combines zpool status with chassis information
+* create proposals for zpool layouts. 
 
 It's a work in progress. It works for me, but I don't have the time to polish or clean it up; so if you want to add your favourite feature or fix some nasty bug, feel free to contribute.
 
@@ -30,7 +31,7 @@ I show the packagenames in puppet DSL:
 
 There is no need for tools from LSI. 
 This version of diskmap.py supports single and dual path sas configurations.
-The sas components (hba, switch, enclosure, disk) must support SES3.
+The sas components (hba, switch, enclosure, disk) must support SES-3.
 
 There is some work in progress for smartmontools support.
 
@@ -46,7 +47,7 @@ I tested with
 
 Everything happens through a CLI:
 
-	# ./diskmap.py 
+	# ./diskmap.ses.py
 	Diskmap - berilia>
 
 ## `discover`
@@ -56,7 +57,7 @@ It will populate a cache, which will in turn be used by other commands.
 
 Example:
 
-  zd-sol-s1:~# diskmap.py discover
+  zd-sol-s1:~# diskmap.ses.py discover
   INFO  discover_enclosures
   INFO  discover_mapping
   INFO  discover_zpool
