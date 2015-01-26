@@ -1,46 +1,24 @@
-This document is actually heavily updated.
-Please read the original document in original.README.md
+# DiskMap
 
-# DiskMap (diskmap.ses.py)
+OpenSolaris/OpenIndiana utility to manage drive and map wmn device name (c1txxx) to real drive using lsi sas controller — Read more
 
-Solaris/Illumos utility to manage drive and map wmn device name (c1txxx) to real drive
-
-This script will hopefully make your life easier if you use ZFS on Solaris/Illumos with a SAS environment supportimg SES3.
+This script will hopefully make your life easier if you use ZFS on OpenSolaris/OpenIndiana with LSI controllers and some kind of backplane.
 
 It can:
 
 * list connected drives, and see the mapping between wmn device name (c1txxx) and their physical location (controller, enclosure, slot);
 * turn the error led of a drive on and off (for easy identification of the drive in large enclosures with many disks);
 * be used as a pipe to enhance the output of programs like `iostat` to annotate disk information with the location of each disk.
-* create proposals for zpool layouts 
 
 It's a work in progress. It works for me, but I don't have the time to polish or clean it up; so if you want to add your favourite feature or fix some nasty bug, feel free to contribute.
 
 # Requirements
 
-You have to install some packages from the repositories.
-
-I show the packagenames in puppet DSL:
-
-		if ($operatingsystem == 'OpenIndiana') {
-			package {['sg3_utils','sasinfo']: ensure => installed }
-		} elsif ($operatingsystem == 'Solaris') {
-			package {['sg3_utils','sas-utilities']: ensure => installed }
-		}
-
-There is no need for tools from LSI. 
-This version of diskmap.py supports single and dual path sas configurations.
-The sas components (hba, switch, enclosure, disk) must support SES3.
+You have to get the sas2ircu tool. Install it in /usr/sbin, or edit the path in the file).
+An outdated revision is available [here](http://www.supermicro.com/support/faqs/data_lib/FAQ_9633_SAS2IRCU_Phase_5.0-5.00.00.00.zip).
 
 There is some work in progress for smartmontools support.
 
-# Supported hardware
-
-If the sas component supports SES3 it is supported.
-I tested with
-- Hbas: Oracle SAS/Thebe, LSI 9200-8e, LSI 9207-8e
-- SAS-Switch: LSI 6160
-- Enclosure: DataOn 1640D, DataOn 1660D, SUN J4400, Supermicro SC847BE2C-R1K28LPB
 
 # Usage & Available Commands
 
@@ -49,6 +27,11 @@ Everything happens through a CLI:
 	# ./diskmap.py 
 	Diskmap - berilia>
 
+You can also run individual commands directly when invoking the program:
+
+	# ./diskmap.py ledoff all
+
+
 ## `discover`
 
 You need to run discover whenever the layout has changed (disk have been added/removed).
@@ -56,10 +39,11 @@ It will populate a cache, which will in turn be used by other commands.
 
 Example:
 
-  zd-sol-s1:~# diskmap.py discover
-  INFO  discover_enclosures
-  INFO  discover_mapping
-  INFO  discover_zpool
+	Diskmap - berilia> discover
+	Warning : Got the serial 5629293 from prtconf, but can't find it in disk detected by sas2ircu (disk removed/not on backplane ?)
+	Warning : Got the serial 5629293 from prtconf, but can't find it in disk detected by sas2ircu (disk removed/not on backplane ?)
+	Warning : Got the disk /dev/rdsk/c3t0d0 from zpool status, but can't find it in disk detected by sas2ircu (disk removed ?)
+	Warning : Got the disk /dev/rdsk/c3t1d0 from zpool status, but can't find it in disk detected by sas2ircu (disk removed ?)
 
 ## `disks`
 
